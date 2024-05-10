@@ -1,98 +1,54 @@
 import streamlit as st
 
-import os
-import time
+# Define game state
+board = [" " for _ in range(9)]
+current_player = "X"
+game_over = False
 
-#empty positions initialzed
-board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-player = 1
-
-Win = 1;Draw = -1
-Running = 0;Stop = 1
-
-Game = Running
-point = 'X'
-
-#printing board to console
-def DrawBoard():
-    print(" %c | %c | %c " % (board[1], board[2], board[3]))
-    print("___|___|___")
-    print(" %c | %c | %c " % (board[4], board[5], board[6]))
-    print("___|___|___")
-    print(" %c | %c | %c " % (board[7], board[8], board[9]))
-    print(" | | ")
+# Winning conditions
+winning_conditions = [
+    (0, 1, 2), (3, 4, 5), (6, 7, 8),  # Rows
+    (0, 3, 6), (1, 4, 7), (2, 5, 8),  # Columns
+    (0, 4, 8), (2, 4, 6)            # Diagonals
+]
 
 
-def CheckPosition(x):
-    if board[x] == ' ':
-        return True
-    else:
-        return False
-#test win or lose condition
-def CheckWin():
-    global Game
-
- #check win in rows
-    if board[1] == board[2] and board[2] == board[3] and board[1] != ' ':
-        Game = Win
-    elif board[4] == board[5] and board[5] == board[6] and board[4] != ' ':
-        Game = Win
-    elif board[7] == board[8] and board[8] == board[9] and board[7] != ' ':
-        Game = Win
-   #in columns 
-    elif board[1] == board[4] and board[4] == board[7] and board[1] != ' ':
-        Game = Win
-    elif board[2] == board[5] and board[5] == board[8] and board[2] != ' ':
-        Game = Win
-    elif board[3] == board[6] and board[6] == board[9] and board[3] != ' ':
-        Game = Win
-#in diagnols    
-    elif board[1] == board[5] and board[5] == board[9] and board[5] != ' ':
-        Game = Win
-    elif board[3] == board[5] and board[5] == board[7] and board[5] != ' ':
-        Game = Win
-#cheching drawe condition
-    elif board[1] != ' ' and board[2] != ' ' and board[3] != ' ' and \
-            board[4] != ' ' and board[5] != ' ' and board[6] != ' ' and \
-            board[7] != ' ' and board[8] != ' ' and board[9] != ' ':
-        Game = Draw
-    else:
-        Game = Running
+# Function to check for a winner
+def check_winner():
+    global game_over
+    for condition in winning_conditions:
+        if board[condition[0]] == board[condition[1]] == board[condition[2]] != " ":
+            game_over = True
+            return board[condition[0]]
+    # Check for a draw
+    if all(x != " " for x in board) and not game_over:
+        game_over = True
+        return "Draw"
+    return None
 
 
-print("tic tac toe by Abdul Moid")
-print("Player 1 [X] 1Player 2 [O]\n")
-print()
-print()
-print("Please Wait...")
-time.sleep(3)
-
-#clearing screen
-while Game == Running:
-    os.system('cls')
-    DrawBoard()
-
-    if player % 2 != 0:
-        print("Player 1's chance")
-        point = 'X'
-    else:
-        print("Player 2's chance")
-        point = 'O'
-
-    choice = int(input("Enter the position between [1-9] where you want to point: "))
-    if CheckPosition(choice):
-        board[choice] = point
-        player += 1
-        CheckWin()
-
-    os.system('cls')
-    DrawBoard()
-
-    if Game == Draw:
-        print("Game Draw-try again")
-    elif Game == Win:
-        player -= 1
-        if player % 2 != 0:
-            print("player 1 wins!")
+# Function to handle player clicks
+def handle_click(index):
+    global board, current_player
+    if board[index] == " " and not game_over:
+        board[index] = current_player
+        winner = check_winner()
+        if winner:
+            st.write(f"{winner} Wins!")
         else:
-            print("Player 2 Wins!")
+            current_player = "X" if current_player == "O" else "O"
+
+
+# Streamlit app layout
+st.title("Tic Tac Toe")
+st.write("Current Player:", current_player)
+
+for i in range(3):
+    col1, col2, col3 = st.columns(3)
+    col1.button(board[i * 3], key=f"{i * 3}", on_click=lambda x=i * 3: handle_click(x), disabled=game_over)
+    col2.button(board[i * 3 + 1], key=f"{i * 3 + 1}", on_click=lambda x=i * 3 + 1: handle_click(x), disabled=game_over)
+    col3.button(board[i * 3 + 2], key=f"{i * 3 + 2}", on_click=lambda x=i * 3 + 2: handle_click(x), disabled=game_over)
+
+if game_over:
+    st.button("Reset Game", on_click=lambda: [global board, current_player, game_over; board = [" " for _ in range(9)], current_player = "X", game_over = False])
+
