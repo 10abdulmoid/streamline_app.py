@@ -1,30 +1,47 @@
 import streamlit as st
 
-def calculate(expression):
-  """
-  Calculates the expression using eval.
+# Initialize the chess board
+board = [
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['.', '.', '.', '.', '.', '.', '.', '.'],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+]
 
-  Args:
-      expression: The mathematical expression to calculate.
+# Function to display the board
+def display_board(board):
+    for row in board:
+        st.write(row)
 
-  Returns:
-      The result of the calculation or None if there's an error.
-  """
-  try:
-    return eval(expression)
-  except:
-    return None
+# Function to get user input for move
+def get_move():
+    st.sidebar.write("Enter your move (e.g., e2 to e4)")
+    move = st.sidebar.text_input("Move:")
+    return move
 
-st.title("Simple Calculator")
+# Function to make the move on the board
+def make_move(board, move):
+    # Implement logic to update the board based on the move
+    # For simplicity, assume the move is valid
+    return board
 
-# Input field for expression
-expression = st.text_input("Enter expression:")
+# Main function
+def main():
+    st.title("Chess Game")
 
-# Calculate button
-if st.button("Calculate"):
-  # Calculate the expression and display the result
-  result = calculate(expression)
-  if result is not None:
-    st.write(f"Result: {result}")
-  else:
-    st.error("Invalid expression")
+    # Display the initial board
+    display_board(board)
+
+    # Get user input and make moves
+    move = get_move()
+    if move:
+        board = make_move(board, move)
+        display_board(board)
+
+# Run the app
+if __name__ == "__main__":
+    main()
